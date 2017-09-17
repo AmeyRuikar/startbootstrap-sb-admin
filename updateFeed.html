@@ -253,7 +253,31 @@
           <li class="breadcrumb-item active">My Dashboard</li>
         </ol>
 
-        <h1>Blank Page</h1>
+        <h1>Update Feeds</h1>
+        <form>
+        Description: <br>
+        <textarea id ="description"></textarea> <br>
+        Organization : <br>
+        <select id="org">
+          <option value="goonj">Goonj</option>
+          <option value="redCross">Red Cross</option>
+          <option value="americanRedCross">American Red Cross</option>
+       
+        </select> <br> <br>
+
+        Region: <br>
+        <select id="region">
+          <option value="0">region 1</option>
+          <option value="1">region 2</option>
+          <option value="2">region 3</option>
+       
+        </select> <br> <br>
+        Choose Picture: <br>
+       <!-- <progress value="0" max="100" id="uploader">0%</progress><br> -->
+        <input type="file" value="upload" id="imgUpload" /> <br> <br>
+        <input type="button" value="Update" onclick="sub()">
+        <br>
+        </form>
 
       </div>
       <!-- /.container-fluid -->
@@ -313,15 +337,56 @@
 <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
 <script src="js/prakul.js"></script>
 <script type="application/javascript">
+    var userName = localStorage.getItem("user");
+    var uploader = document.getElementById('uploader');
+    var imgButton = document.getElementById('imgUpload');
+    var submitButton = document.getElementById('submit1');
+    var file;
+     var storageRef;
+    imgButton.addEventListener('change', function(e){
+      file = e.target.files[0];
+      storageRef = firebase.storage().ref('feed/' + file.name);
+      
+      /*task.on('state_changed', 
+        function progress(sn){
+            var per = (sn.bytesTransferred / sn.totalBytes) * 100;
+            uploader.value = per;
+      }, function error(err){
+
+      }, function complete(){
+
+      })
+    */
+    });
+   // submitButton.addEventListener('onClick', function(e){
+     function sub(){
+      console.log("updating");
+        var task = storageRef.put(file);
+        var fullPath = storageRef.fullPath;
+        var description = document.getElementById('description').value;
+        var org = document.getElementById('org').value;
+        var region = document.getElementById('region').value;
+        var dbRef = firebase.database().ref().child('feed').child(org);
+        
+        dbRef.push({
+          desc: description,
+          link: fullPath,
+          regionId: region,
+          timestamp:Date.now(),
+          volunteerID:userName,
+    
+          });
+        console.log("updated");
+    };
 
     // Initialize Firebase
 
     //get db reference, child is the key
-    var dbRef = firebase.database().ref().child('users');
+    //var dbRef = firebase.database().ref().child('users');
     //To load from database once
-    dbRef.once('value').then(function(sn){
-      console.log(sn.val());
-    })
+    //dbRef.once('value').then(function(sn){
+    //  console.log(sn.val());
+    //})
 
     //To continuously load/update data as the db is updated
     //dbRef.on('value', snap => big.innerText = snap.val());
