@@ -248,7 +248,7 @@
           <li class="breadcrumb-item">
             <a href="#" id="orgHeaderName">Org Name: </a>
           </li>
-          <li class="breadcrumb-item active">#TODO: disasterName</li>
+          <li id="orgDisasterName" class="breadcrumb-item active">#TODO: disasterName</li>
         </ol>
 
 
@@ -263,7 +263,7 @@
                   <i class="fa fa-fw fa-shopping-cart"></i>
                 </div>
                 <div class="mr-5">
-                  2489 Resources required
+                  <h3><div id="reqd"> </div></h3>Resources required
                 </div>
               </div>
               <a href="#" class="card-footer text-white clearfix small z-1">
@@ -282,7 +282,7 @@
                   <i class="fa fa-fw fa-support"></i>
                 </div>
                 <div class="mr-5">
-                  345 resources being shipped
+                  <h3><div id="transit"> </div></h3> resources being shipped
                 </div>
               </div>
               <a href="#" class="card-footer text-white clearfix small z-1">
@@ -301,7 +301,7 @@
                   <i class="fa fa-fw fa fa-check"></i>
                 </div>
                 <div class="mr-5">
-                  227 resources distributed
+                  <h3><div id="supplied"> </div></h3> resources distributed
                 </div>
               </div>
               <a href="#" class="card-footer text-white clearfix small z-1">
@@ -497,6 +497,7 @@
     <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
     <!-- Custom scripts for this template -->
+    <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
     <script src="js/sb-admin.min.js"></script>
     <script src="config/globals.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>

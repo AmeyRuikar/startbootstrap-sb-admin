@@ -8,6 +8,7 @@ function tryLogin() {
     var org = email.split('@')[1].split('.')[0];
     //console.log(orgName);
     localStorage.setItem("orgName", org);
+    localStorage.setItem("disasterName", "Irma")
 
     //window.glob = email.split('@')[1].split('.')[0].toUpperCase();
 
