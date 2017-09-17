@@ -19,7 +19,7 @@ $( document ).ready(function() {
     };
     firebase.initializeApp(config);
 
-    var dbRef = firebase.database().ref().child('orgs').child('redCross');
+    var dbRef = firebase.database().ref().child('orgs').child(localStorage.getItem("orgName").toLowerCase()||'goonj');
     //To load from database once
     dbRef.once('value').then(function(sn){
         //console.log(sn.val());
