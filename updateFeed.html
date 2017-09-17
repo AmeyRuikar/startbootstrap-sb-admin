@@ -29,95 +29,51 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-      <a class="navbar-brand" href="#">Start Bootstrap</a>
+      <a class="navbar-brand" href="#">Agera</a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Dashboard">
-            <a class="nav-link" href="#">
+          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+            <a class="nav-link" href="orgPage.html">
               <i class="fa fa-fw fa-dashboard"></i>
               <span class="nav-link-text">
                 Dashboard</span>
             </a>
           </li>
           <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-            <a class="nav-link" href="#">
-              <i class="fa fa-fw fa-area-chart"></i>
+            <a class="nav-link" href="overview.html">
+              <i class="fa fa-fw fa-map"></i>
               <span class="nav-link-text">
-                Charts</span>
+                Overview</span>
             </a>
           </li>
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
-            <a class="nav-link" href="#">
-              <i class="fa fa-fw fa-table"></i>
+          <li class="nav-item  active" data-toggle="tooltip" data-placement="right" title="Tables">
+            <a class="nav-link" href="updateFeed.html">
+              <i class="fa fa-fw fa-pencil-square-o"></i>
               <span class="nav-link-text">
-                Tables</span>
+                Share updates</span>
             </a>
           </li>
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
-            <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-wrench"></i>
-              <span class="nav-link-text">
-                Components</span>
-            </a>
-            <ul class="sidenav-second-level collapse" id="collapseComponents">
-              <li>
-                <a href="static-nav.html">Static Navigation</a>
-              </li>
-              <li>
-                <a href="#">Custom Card Examples</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
+
+          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Settings Pages">
             <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-file"></i>
+              <i class="fa fa-fw fa-cog"></i>
               <span class="nav-link-text">
-                Example Pages</span>
+                Settings</span>
             </a>
             <ul class="sidenav-second-level collapse" id="collapseExamplePages">
               <li>
-                <a href="login.html">Login Page</a>
-              </li>
-              <li>
-                <a href="register.html">Registration Page</a>
+                <a href="register.html">Update information Page</a>
               </li>
               <li>
                 <a href="forgot-password.html">Forgot Password Page</a>
               </li>
-              <li>
-                <a href="blank.html">Blank Page</a>
-              </li>
+
             </ul>
           </li>
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-            <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
-              <i class="fa fa-fw fa-sitemap"></i>
-              <span class="nav-link-text">
-                Menu Levels</span>
-            </a>
-            <ul class="sidenav-second-level collapse" id="collapseMulti">
-              <li>
-                <a href="#">Second Level Item</a>
-              </li>
-              <li>
-                <a href="#">Second Level Item</a>
-              </li>
-              <li>
-                <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti2">Third Level</a>
-                <ul class="sidenav-third-level collapse" id="collapseMulti2">
-                  <li>
-                    <a href="#">Third Level Item</a>
-                  </li>
-                  <li>
-                    <a href="#">Third Level Item</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
+
           <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
             <a class="nav-link" href="#">
               <i class="fa fa-fw fa-link"></i>
@@ -248,35 +204,31 @@
         <!-- Breadcrumbs -->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#">Dashboard</a>
+            <a href="#">Share an update</a>
           </li>
-          <li class="breadcrumb-item active">My Dashboard</li>
+
         </ol>
 
         <h1>Update Feeds</h1>
         <form>
-        Description: <br>
+          Updating to Organization: <h4 id="OrgName"></h4>
+          <br>Description: <br>
         <textarea id ="description"></textarea> <br>
-        Organization : <br>
-        <select id="org">
-          <option value="goonj">Goonj</option>
-          <option value="redCross">Red Cross</option>
-          <option value="americanRedCross">American Red Cross</option>
        
-        </select> <br> <br>
-
-        Region: <br>
-        <select id="region">
-          <option value="0">region 1</option>
-          <option value="1">region 2</option>
-          <option value="2">region 3</option>
-       
-        </select> <br> <br>
+        </select> <br>
         Choose Picture: <br>
        <!-- <progress value="0" max="100" id="uploader">0%</progress><br> -->
-        <input type="file" value="upload" id="imgUpload" /> <br> <br>
-        <input type="button" value="Update" onclick="sub()">
-        <br>
+        <input type="file" value="upload" id="imgUpload" />
+         <br> <br>
+       <!-- <input type="button" value="Update" onclick="sub()"> -->
+
+          <div class="row">
+            <div class="col-2">
+            <a  class="btn btn-primary btn-block d-block small mt-3" onclick="sub();">Share</a>
+              </div>
+          </div>
+
+          <br>
         </form>
 
       </div>
@@ -358,14 +310,20 @@
       })
     */
     });
+
+    //document.getElementById('OrgName').chi
+    $('#OrgName').html(localStorage.getItem("orgName").toUpperCase());
    // submitButton.addEventListener('onClick', function(e){
      function sub(){
       console.log("updating");
+
+
+
         var task = storageRef.put(file);
         var fullPath = storageRef.fullPath;
         var description = document.getElementById('description').value;
-        var org = document.getElementById('org').value;
-        var region = document.getElementById('region').value;
+        var org = localStorage.getItem("orgName").toLowerCase();
+        var region = "X";
         var dbRef = firebase.database().ref().child('feed').child(org);
         
         dbRef.push({
@@ -377,6 +335,7 @@
     
           });
         console.log("updated");
+       alert("Shared!");
     };
 
     // Initialize Firebase
