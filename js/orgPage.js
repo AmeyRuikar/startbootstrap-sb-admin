@@ -7,6 +7,9 @@ $( document ).ready(function() {
 
     $('#orgDisasterName').html(localStorage.getItem("disasterName").toUpperCase());
 
+    var camelcase = localStorage.getItem("orgName").replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
 
     // Initialize Firebase
     var config = {
@@ -19,7 +22,7 @@ $( document ).ready(function() {
     };
     firebase.initializeApp(config);
 
-    var dbRef = firebase.database().ref().child('orgs').child(localStorage.getItem("orgName").toLowerCase()||'goonj');
+    var dbRef = firebase.database().ref().child('orgs').child(camelcase||'goonj');
     //To load from database once
     dbRef.once('value').then(function(sn){
         //console.log(sn.val());
