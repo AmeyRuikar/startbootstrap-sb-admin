@@ -179,39 +179,40 @@ require([
         var dbRef = firebase.database().ref();
         dbRef.once('value').then(function(snapshot) {
             if(snapshot.val() != null){
-                console.log(snapshot.val()['regions']);
                 var db_val0 = snapshot.val()['regions'];
                 for(i=0;i<(grid_length*grid_length);i++){
                     var extent = new Extent(db_val0[i].xmin,db_val0[i].ymin,db_val0[i].xmax,db_val0[i].ymax, map.spatialReference);
                     var info = i;
 
                     var db_val = snapshot.val()['orgs'];
-                    flag = false
+                    flag = false;
+                    var total_req = 0;
                     for (var key in db_val) {
                         if(info in db_val[key]['resources']){
-                            flag = true
-                            var total_req = 0;
+                            flag = true;
                             for (var p in db_val[key]['resources'][info]) {
                                 total_req += db_val[key]['resources'][info][p]['req'];
                             }
-                            if(total_req > 10)
-                                index = 2;
-                            else if(total_req > 5)
-                                index = 1;
-                            else
-                                index = 0;
-                            fillSymbol = new SimpleFillSymbol(
-                                SimpleFillSymbol.STYLE_SOLID,
-                                new SimpleLineSymbol(
-                                    SimpleLineSymbol.STYLE_LINE,
-                                    new Color(lineColors[index]), 2),
-                                new Color(fillColors[index]
-                                )
-                            );
-                            console.log(fillSymbol);
-                            graphic = new Graphic(extent, fillSymbol, {"ID" : info});
-                            map.graphics.add(graphic);
                         }
+                    }
+                    if(flag){
+
+                        if(total_req > 10)
+                            index = 2;
+                        else if(total_req > 5)
+                            index = 1;
+                        else
+                            index = 0;
+                        fillSymbol = new SimpleFillSymbol(
+                            SimpleFillSymbol.STYLE_SOLID,
+                            new SimpleLineSymbol(
+                                SimpleLineSymbol.STYLE_LINE,
+                                new Color(lineColors[index]), 2),
+                            new Color(fillColors[index]
+                            )
+                        );
+                        graphic = new Graphic(extent, fillSymbol, {"ID" : info});
+                        map.graphics.add(graphic);
                     }
                     if(!flag){
                         fillSymbol = new SimpleFillSymbol(
@@ -222,7 +223,6 @@ require([
                             new Color(fillColors[3]
                             )
                         );
-                        console.log(fillSymbol);
                         graphic = new Graphic(extent, fillSymbol, {"ID" : info});
                         map.graphics.add(graphic);
                     }
@@ -324,41 +324,47 @@ require([
         var query = new Query();
         query.geometry = evt.geometry;
         output_c = getTextContent(evt.graphic.attributes.ID, evt);
-        console.log(output_c);
     }
 
 
     function getTextContent(info, evt) {
-        console.log(info);
         var dbRef = firebase.database().ref().child('orgs');
 
         dbRef.once('value').then(function(snapshot) {
             if(snapshot.val() != null){
                 var db_val = snapshot.val();
+                count_req = 0;
+                count_supplied = 0;
+                count_trans = 0;
+                non_profit_title = "";
+                flag = false;
                 for (var key in db_val) {
                     if(info in db_val[key]['resources']){
-                        var output_content = '';
+                        flag = true;
+                        non_profit_title += key + " | ";
                         for (var p in db_val[key]['resources'][info]) {
-                            console.log(db_val[key]['resources'][info][p]['req']);
-                            output_content += "<b>" + p.toUpperCase() + "</b><br/>";
-                            output_content += "<b>" + "Required" + ":" + db_val[key]['resources'][info][p]['req'] + "</b>,";
-                            output_content += "<b>" + "Supplied" + ":" + db_val[key]['resources'][info][p]['supplied'] + "</b>,";
-                            output_content += "<b>" + "In Transit" + ":" + db_val[key]['resources'][info][p]['trans'] + "</b><br/>";
+                            count_req += db_val[key]['resources'][info][p]['req'];
+                            count_supplied += db_val[key]['resources'][info][p]['supplied'];
+                            count_trans += db_val[key]['resources'][info][p]['trans'];
                         }
-
-                        map.infoWindow.setContent(output_content);
-                        map.infoWindow.setTitle(key);
-                        map.infoWindow.show(
-                            new Point(
-                                evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
-                            new Point(
-                                evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
-                            InfoWindow.ANCHOR_UPPERRIGHT
-                        );
-
-                        console.log(output_content);
-                        return output_content;
                     }
+                }
+                if(flag){
+                    var output_content = "";
+                    output_content += "<b>" + "Required" + ":" + count_req + "</b><br/>";
+                    output_content += "<b>" + "Supplied" + ":" + count_supplied + "</b><br/>";
+                    output_content += "<b>" + "In-Transit" + ":" + count_trans + "</b><br/>";
+                    console.log(output_content);
+                    map.infoWindow.setContent(output_content);
+                    map.infoWindow.setTitle(non_profit_title.toUpperCase());
+                    map.infoWindow.show(
+                        new Point(
+                            evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
+                        new Point(
+                            evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
+                        InfoWindow.ANCHOR_UPPERRIGHT
+                    );
+                    return output_content;
                 }
             }
 
