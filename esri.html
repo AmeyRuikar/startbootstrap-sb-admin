@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Shapes and Symbols</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/css/esri.css">
+
+    <style>
+      #info {
+        top: 20px;
+        color: #444;
+        height: auto;
+        font-family: arial;
+        right: 20px;
+        margin: 5px;
+        padding: 10px;
+        position: absolute;
+        width: 115px;
+        z-index: 40;
+        border: solid 2px #666;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+    html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+        width: 100%;
+    }
+    button {
+        display: block;
+    }
+
+
+      .esriPopup.myTheme .titlePane,
+      .dj_ie7 .esriPopup.myTheme .titlePane .title {
+          background-color: #899752;
+          color: #333333;
+          font-weight: bold;
+      }
+
+      .esriPopup.myTheme .titlePane {
+          border-bottom: 1px solid #121310;
+      }
+
+      .esriPopup.myTheme a {
+          color: #d6e68a;
+      }
+      .esriPopup.myTheme .pointer.top{
+          background-color:#899752;
+      }
+      .esriPopup.myTheme .outerPointer,  .esriPopup.myTheme .pointer.bottom{
+          background-color:#424242;
+      }
+
+      .esriPopup.myTheme .contentPane,
+      .esriPopup.myTheme .actionsPane {
+          border-color: 1px solid #121310;
+          background-color: #424242;
+          color: #ffffff;
+      }
+</style>
+<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+    <script src="https://js.arcgis.com/3.21/"></script>
+    <script>
+var map, tb;
+
+require([
+    "esri/config",
+    "esri/InfoTemplate",
+    "esri/map",
+    "esri/dijit/Popup",
+    "esri/dijit/PopupTemplate",
+    "esri/geometry/Extent",
+    "esri/layers/FeatureLayer",
+    "esri/layers/ArcGISTiledMapServiceLayer",
+    "esri/symbols/SimpleFillSymbol",
+    "esri/symbols/SimpleLineSymbol",
+    "esri/tasks/GeometryService",
+    "esri/tasks/query",
+    "dojo/dom-construct",
+    "dojo/dom-class",
+    "dojo/parser",
+    "dojo/_base/lang",
+    "dojo/date/locale",
+    "esri/toolbars/draw",
+    "esri/symbols/SimpleMarkerSymbol",
+    "esri/symbols/PictureFillSymbol",
+    "esri/symbols/CartographicLineSymbol",
+    "esri/graphic",
+    "esri/Color", "dojo/dom", "dojo/on", "dojo/domReady!"
+], function(
+    esriConfig,
+    InfoTemplate,
+    Map,
+    Popup,
+    PopupTemplate,
+    Extent,
+    FeatureLayer,
+    ArcGISTiledMapServiceLayer,
+    SimpleFillSymbol,
+    SimpleLineSymbol,
+    GeometryService,
+    Query,
+    domConstruct,
+    domClass,
+    parser,
+    lang,
+    locale,
+    Draw,
+    SimpleMarkerSymbol,
+    PictureFillSymbol,
+    CartographicLineSymbol,
+    Graphic,
+    Color,
+    dom,
+    on
+) {
+
+    parser.parse();
+
+    var popup = new Popup({
+        fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+    }, domConstruct.create("div"));
+
+    domClass.add(popup.domNode, "myTheme");
+
+    map = new Map("mapDiv", {
+        basemap: "streets",
+        center: [-81.3792, 28.5383],
+        zoom: 9,
+        infoWindow: popup
+    });
+    map.on("load", initApp);
+
+    map.on("click", function (event) {
+        var query = new Query();
+        query.geometry = pointToExtent(map, event.mapPoint, 10);
+        var deferred = featureLayer.selectFeatures(query,
+            FeatureLayer.SELECTION_NEW);
+        map.infoWindow.setFeatures([deferred]);
+        map.infoWindow.show(event.mapPoint);
+    });
+
+    lineColors = [[255,243,51], [239,43,24], [24,63,239], [49,191,62]];
+    fillColors = [[255,243,51, 0.75], [239,43,24, 0.75], [24,63,239, 0.75], [49,191,62,0.75]];
+
+    randomColor = Math.floor(Math.random() * 4);;
+
+    var fillSymbol = new SimpleFillSymbol(
+        SimpleFillSymbol.STYLE_SOLID,
+        new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_LINE,
+            new Color([255,0,0]), 2),
+        new Color([255,0,0,0.25]
+        )
+    );
+
+    var fillSymbolSelected = new SimpleFillSymbol(
+        SimpleFillSymbol.STYLE_SOLID,
+        new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_LINE,
+            new Color(lineColors[randomColor]), 2),
+        new Color(fillColors[randomColor]
+        )
+    );
+
+    function initApp() {
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAtcUwhzA6pUe9JnKS0qExtn7mefsdzP28",
+            authDomain: "tcdisrupt17.firebaseapp.com",
+            databaseURL: "https://tcdisrupt17.firebaseio.com",
+            projectId: "tcdisrupt17",
+            storageBucket: "tcdisrupt17.appspot.com",
+            messagingSenderId: "921359473730"
+        };
+        firebase.initializeApp(config);
+        var dbRef = firebase.database().ref().child('regions');
+        dbRef.once('value').then(function(snapshot) {
+            if(snapshot.val() != null){
+                var db_val = snapshot.val();
+                for(i=0;i<100;i++){
+                    var extent = new Extent(db_val[i].xmin,db_val[i].ymin,db_val[i].xmax,db_val[i].ymax, map.spatialReference);
+                    graphic = new Graphic(extent, fillSymbol, {"ID" : i});
+                    map.graphics.add(graphic);
+                }
+            }
+        });
+
+        tb = new Draw(map);
+        tb.on("draw-end", addGraphic);
+
+        map.graphics.on("click", changeRegionColor);
+
+        // event delegation so a click handler is not
+        // needed for each individual button
+        on(dom.byId("info"), "click", function(evt) {
+            if ( evt.target.id === "info" ) {
+                return;
+            }
+            var tool = evt.target.id.toLowerCase();
+            map.disableMapNavigation();
+            tb.activate(tool);
+        });
+    }
+
+
+    function addGraphic(evt) {
+        var dbRef = firebase.database().ref().child('regions');
+
+        //deactivate the toolbar and clear existing graphics
+        tb.deactivate();
+        map.enableMapNavigation();
+
+        var graphic = new Graphic(evt.geometry, fillSymbol);
+        map.graphics.add(graphic);
+
+        x_max = graphic.toJson().geometry.xmax;
+        x_min = graphic.toJson().geometry.xmin;
+        y_max = graphic.toJson().geometry.ymax;
+        y_min = graphic.toJson().geometry.ymin;
+        var delta_x = Math.abs(x_max - x_min)/10;
+        var delta_y = Math.abs(y_max - y_min)/10;
+
+        x_min_new = x_min;
+        y_min_new = y_min;
+
+        for(i=0;i<10; i++){
+            var x_max_new = x_min_new + delta_x;
+            y_min_new = y_min;
+            for(j=0;j<10; j++){
+                var y_max_new = y_min_new + delta_y;
+
+                var extent = new Extent(x_min_new,y_min_new,x_max_new,y_max_new, map.spatialReference);
+                var region_key = i*10 + j;
+                graphic = new Graphic(extent, fillSymbol, {"ID":region_key});
+                map.graphics.add(graphic);
+
+                dbRef.child(region_key).set({
+                    xmin: x_min_new,
+                    ymin: y_min_new,
+                    xmax: x_max_new,
+                    ymax: y_max_new
+                });
+
+                y_min_new = y_max_new;
+            }
+            x_min_new = x_max_new;
+        }
+
+    }
+
+    function changeRegionColor(evt){
+        var dbRef = firebase.database().ref().child('regions');
+        evt.graphic.symbol = fillSymbolSelected;
+        map.graphics.redraw();
+        dbRef.push({
+            ID:evt.graphic.attributes.ID
+        });
+    }
+});
+</script>
+</head>
+
+<body>
+
+<div id="info">
+    <button id="Extent">Rectangle</button>
+    </div>
+
+    <div id="mapDiv"></div>
+
+    </body>
+    </html>
