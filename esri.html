@@ -69,7 +69,11 @@
     <script>
 var map, tb;
 
+var grid_length = 5;
+
 require([
+    "esri/geometry/Point",
+    "esri/dijit/InfoWindow",
     "esri/config",
     "esri/InfoTemplate",
     "esri/map",
@@ -94,6 +98,8 @@ require([
     "esri/graphic",
     "esri/Color", "dojo/dom", "dojo/on", "dojo/domReady!"
 ], function(
+    Point,
+    InfoWindow,
     esriConfig,
     InfoTemplate,
     Map,
@@ -139,15 +145,6 @@ require([
     });
     map.on("load", initApp);
 
-    map.on("click", function (event) {
-        var query = new Query();
-        query.geometry = pointToExtent(map, event.mapPoint, 10);
-        var deferred = featureLayer.selectFeatures(query,
-            FeatureLayer.SELECTION_NEW);
-        map.infoWindow.setFeatures([deferred]);
-        map.infoWindow.show(event.mapPoint);
-    });
-
     lineColors = [[255,243,51], [239,43,24], [24,63,239], [49,191,62]];
     fillColors = [[255,243,51, 0.75], [239,43,24, 0.75], [24,63,239, 0.75], [49,191,62,0.75]];
 
@@ -187,7 +184,7 @@ require([
         dbRef.once('value').then(function(snapshot) {
             if(snapshot.val() != null){
                 var db_val = snapshot.val();
-                for(i=0;i<100;i++){
+                for(i=0;i<(grid_length*grid_length);i++){
                     var extent = new Extent(db_val[i].xmin,db_val[i].ymin,db_val[i].xmax,db_val[i].ymax, map.spatialReference);
                     graphic = new Graphic(extent, fillSymbol, {"ID" : i});
                     map.graphics.add(graphic);
@@ -199,6 +196,7 @@ require([
         tb.on("draw-end", addGraphic);
 
         map.graphics.on("click", changeRegionColor);
+        map.graphics.on("mouse-over", showInfoMessage);
 
         // event delegation so a click handler is not
         // needed for each individual button
@@ -227,20 +225,20 @@ require([
         x_min = graphic.toJson().geometry.xmin;
         y_max = graphic.toJson().geometry.ymax;
         y_min = graphic.toJson().geometry.ymin;
-        var delta_x = Math.abs(x_max - x_min)/10;
-        var delta_y = Math.abs(y_max - y_min)/10;
+        var delta_x = Math.abs(x_max - x_min)/grid_length;
+        var delta_y = Math.abs(y_max - y_min)/grid_length;
 
         x_min_new = x_min;
         y_min_new = y_min;
 
-        for(i=0;i<10; i++){
+        for(i=0;i<grid_length; i++){
             var x_max_new = x_min_new + delta_x;
             y_min_new = y_min;
-            for(j=0;j<10; j++){
+            for(j=0;j<grid_length; j++){
                 var y_max_new = y_min_new + delta_y;
 
                 var extent = new Extent(x_min_new,y_min_new,x_max_new,y_max_new, map.spatialReference);
-                var region_key = i*10 + j;
+                var region_key = i*grid_length + j;
                 graphic = new Graphic(extent, fillSymbol, {"ID":region_key});
                 map.graphics.add(graphic);
 
@@ -275,6 +273,53 @@ require([
                 trans:0
             }
         });
+    }
+
+    function showInfoMessage(evt){
+        var query = new Query();
+        query.geometry = evt.geometry;
+        output_c = getTextContent(evt.graphic.attributes.ID, evt);
+        console.log(output_c);
+    }
+
+
+    function getTextContent(info, evt) {
+        console.log(info);
+        var dbRef = firebase.database().ref().child('orgs');
+
+        dbRef.once('value').then(function(snapshot) {
+            if(snapshot.val() != null){
+                var db_val = snapshot.val();
+                for (var key in db_val) {
+                    if(info in db_val[key]['resources']){
+                        var output_content = '';
+                        for (var p in db_val[key]['resources'][info]) {
+                            console.log(db_val[key]['resources'][info][p]['req']);
+                            output_content += "<b>" + p.toUpperCase() + "</b><br/>";
+                            output_content += "<b>" + "Required" + ":" + db_val[key]['resources'][info][p]['req'] + "</b>,";
+                            output_content += "<b>" + "Supplied" + ":" + db_val[key]['resources'][info][p]['supplied'] + "</b>,";
+                            output_content += "<b>" + "In Transit" + ":" + db_val[key]['resources'][info][p]['trans'] + "</b><br/>";
+                        }
+
+                        map.infoWindow.setContent(output_content);
+                        map.infoWindow.setTitle(key);
+                        map.infoWindow.show(
+                            new Point(
+                                evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
+                            new Point(
+                                evt.graphic.geometry.xmax, evt.graphic.geometry.ymax, evt.graphic.geometry.spatialReference),
+                            InfoWindow.ANCHOR_UPPERRIGHT
+                        );
+
+                        console.log(output_content);
+                        return output_content;
+                    }
+                }
+            }
+
+        });
+
+
     }
 });
 </script>
