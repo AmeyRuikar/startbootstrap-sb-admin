@@ -145,26 +145,22 @@ require([
     });
     map.on("load", initApp);
 
-    lineColors = [[255,243,51], [239,43,24], [24,63,239], [49,191,62]];
-    fillColors = [[255,243,51, 0.75], [239,43,24, 0.75], [24,63,239, 0.75], [49,191,62,0.75]];
+    lineColors = [[249,245,32], [249,160,32], [244,42,14], [255,255,255]];
+    fillColors = [[249,245,32,0.75], [249,160,32,0.75], [244,42,14,0.75], [255,255,255,0.75]];
 
-    randomColor = Math.floor(Math.random() * 4);;
+    lineColors_selection = [217,186,236];
+    fillColors_selection = [217,186,236,0.75];
 
-    var fillSymbol = new SimpleFillSymbol(
-        SimpleFillSymbol.STYLE_SOLID,
-        new SimpleLineSymbol(
-            SimpleLineSymbol.STYLE_LINE,
-            new Color([255,0,0]), 2),
-        new Color([255,0,0,0.25]
-        )
-    );
+    var fillSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+            new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
 
     var fillSymbolSelected = new SimpleFillSymbol(
         SimpleFillSymbol.STYLE_SOLID,
         new SimpleLineSymbol(
             SimpleLineSymbol.STYLE_LINE,
-            new Color(lineColors[randomColor]), 2),
-        new Color(fillColors[randomColor]
+            new Color(lineColors_selection), 2),
+        new Color(fillColors_selection
         )
     );
 
@@ -180,14 +176,58 @@ require([
             messagingSenderId: "921359473730"
         };
         firebase.initializeApp(config);
-        var dbRef = firebase.database().ref().child('regions');
+        var dbRef = firebase.database().ref();
         dbRef.once('value').then(function(snapshot) {
             if(snapshot.val() != null){
-                var db_val = snapshot.val();
+                console.log(snapshot.val()['regions']);
+                var db_val0 = snapshot.val()['regions'];
                 for(i=0;i<(grid_length*grid_length);i++){
-                    var extent = new Extent(db_val[i].xmin,db_val[i].ymin,db_val[i].xmax,db_val[i].ymax, map.spatialReference);
-                    graphic = new Graphic(extent, fillSymbol, {"ID" : i});
-                    map.graphics.add(graphic);
+                    var extent = new Extent(db_val0[i].xmin,db_val0[i].ymin,db_val0[i].xmax,db_val0[i].ymax, map.spatialReference);
+                    var info = i;
+
+                    var db_val = snapshot.val()['orgs'];
+                    flag = false
+                    for (var key in db_val) {
+                        if(info in db_val[key]['resources']){
+                            flag = true
+                            var total_req = 0;
+                            for (var p in db_val[key]['resources'][info]) {
+                                total_req += db_val[key]['resources'][info][p]['req'];
+                            }
+                            if(total_req > 10)
+                                index = 2;
+                            else if(total_req > 5)
+                                index = 1;
+                            else
+                                index = 0;
+                            fillSymbol = new SimpleFillSymbol(
+                                SimpleFillSymbol.STYLE_SOLID,
+                                new SimpleLineSymbol(
+                                    SimpleLineSymbol.STYLE_LINE,
+                                    new Color(lineColors[index]), 2),
+                                new Color(fillColors[index]
+                                )
+                            );
+                            console.log(fillSymbol);
+                            graphic = new Graphic(extent, fillSymbol, {"ID" : info});
+                            map.graphics.add(graphic);
+                        }
+                    }
+                    if(!flag){
+                        fillSymbol = new SimpleFillSymbol(
+                            SimpleFillSymbol.STYLE_SOLID,
+                            new SimpleLineSymbol(
+                                SimpleLineSymbol.STYLE_LINE,
+                                new Color(lineColors[3]), 2),
+                            new Color(fillColors[3]
+                            )
+                        );
+                        console.log(fillSymbol);
+                        graphic = new Graphic(extent, fillSymbol, {"ID" : info});
+                        map.graphics.add(graphic);
+                    }
+
+
                 }
             }
         });
@@ -268,6 +308,11 @@ require([
         var region_key = evt.graphic.attributes.ID;
         dbRef.child(region_key).update({
             food:{
+                req:0,
+                supplied:0,
+                trans:0
+            },
+            medicine:{
                 req:0,
                 supplied:0,
                 trans:0
