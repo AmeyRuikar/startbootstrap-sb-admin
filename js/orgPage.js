@@ -85,8 +85,8 @@ $( document ).ready(function() {
 
 
         var categoriesLabel = ['Food',  'Medicines'];
-        var stackedBarData = [{name:'distributed', data:[chartObj.food.supplied, chartObj.medicine.supplied]},
-            {name:'transit', data:[chartObj.food.trans,chartObj.medicine.trans]} ,{name: 'REQUIRED', data:[chartObj.food.req, chartObj.medicine.req]}];
+        var stackedBarData = [{name:'Distributed', data:[chartObj.food.supplied, chartObj.medicine.supplied]},
+            {name:'Transit', data:[chartObj.food.trans,chartObj.medicine.trans]} ,{name: 'Required', data:[chartObj.food.req, chartObj.medicine.req]}];
         $(function () {
             var myChart = Highcharts.chart('2ColBarChart', {
                 chart: {
