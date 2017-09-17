@@ -248,35 +248,31 @@
         <!-- Breadcrumbs -->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#">Dashboard</a>
+            <a href="#">Share an update</a>
           </li>
-          <li class="breadcrumb-item active">My Dashboard</li>
+
         </ol>
 
         <h1>Update Feeds</h1>
         <form>
-        Description: <br>
+          Updating to Organization: <h4 id="OrgName"></h4>
+          <br>Description: <br>
         <textarea id ="description"></textarea> <br>
-        Organization : <br>
-        <select id="org">
-          <option value="goonj">Goonj</option>
-          <option value="redCross">Red Cross</option>
-          <option value="americanRedCross">American Red Cross</option>
        
-        </select> <br> <br>
-
-        Region: <br>
-        <select id="region">
-          <option value="0">region 1</option>
-          <option value="1">region 2</option>
-          <option value="2">region 3</option>
-       
-        </select> <br> <br>
+        </select> <br>
         Choose Picture: <br>
        <!-- <progress value="0" max="100" id="uploader">0%</progress><br> -->
-        <input type="file" value="upload" id="imgUpload" /> <br> <br>
-        <input type="button" value="Update" onclick="sub()">
-        <br>
+        <input type="file" value="upload" id="imgUpload" />
+         <br> <br>
+       <!-- <input type="button" value="Update" onclick="sub()"> -->
+
+          <div class="row">
+            <div class="col-2">
+            <a  class="btn btn-primary btn-block d-block small mt-3" onclick="sub();">Share</a>
+              </div>
+          </div>
+
+          <br>
         </form>
 
       </div>
@@ -358,14 +354,20 @@
       })
     */
     });
+
+    //document.getElementById('OrgName').chi
+    $('#OrgName').html(localStorage.getItem("orgName").toUpperCase());
    // submitButton.addEventListener('onClick', function(e){
      function sub(){
       console.log("updating");
+
+
+
         var task = storageRef.put(file);
         var fullPath = storageRef.fullPath;
         var description = document.getElementById('description').value;
-        var org = document.getElementById('org').value;
-        var region = document.getElementById('region').value;
+        var org = localStorage.getItem("orgName").toLowerCase();
+        var region = "X";
         var dbRef = firebase.database().ref().child('feed').child(org);
         
         dbRef.push({
@@ -377,6 +379,7 @@
     
           });
         console.log("updated");
+       alert("Shared!");
     };
 
     // Initialize Firebase
