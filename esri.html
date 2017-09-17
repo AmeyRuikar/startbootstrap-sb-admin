@@ -259,11 +259,21 @@ require([
     }
 
     function changeRegionColor(evt){
-        var dbRef = firebase.database().ref().child('regions');
         evt.graphic.symbol = fillSymbolSelected;
         map.graphics.redraw();
-        dbRef.push({
-            ID:evt.graphic.attributes.ID
+
+        //Persisting data
+        var non_profit = localStorage.getItem("orgName").replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+            .replace(/\s/g, '')
+            .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
+        var dbRef = firebase.database().ref().child('orgs').child(non_profit).child("resources");
+        var region_key = evt.graphic.attributes.ID;
+        dbRef.child(region_key).update({
+            food:{
+                req:0,
+                supplied:0,
+                trans:0
+            }
         });
     }
 });
