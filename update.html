@@ -49,7 +49,7 @@
                 Overview(public link)</span>
             </a>
           </li>
-          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Tables">
+          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
             <a class="nav-link" href="updateFeed.html">
               <i class="fa fa-fw fa-pencil-square-o"></i>
               <span class="nav-link-text">
@@ -57,7 +57,7 @@
             </a>
           </li>
 
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+          <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Tables">
             <a class="nav-link" href="update.html">
               <i class="fa fa-fw fa-flag"></i>
               <span class="nav-link-text">
@@ -114,32 +114,118 @@
         <!-- Breadcrumbs -->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#">Share an update</a>
+            <a href="#">Updates</a>
           </li>
 
         </ol>
 
-        <h1>Update Feeds</h1>
-        <form>
-          Updating to Organization: <h4 id="OrgName"></h4>
-          <br>Description: <br>
-        <textarea id ="description"></textarea> <br>
-       
-        </select> <br>
-        Choose Picture: <br>
-       <!-- <progress value="0" max="100" id="uploader">0%</progress><br> -->
-        <input type="file" value="upload" id="imgUpload" />
-         <br> <br>
-       <!-- <input type="button" value="Update" onclick="sub()"> -->
 
-          <div class="row">
-            <div class="col-2">
-            <a  class="btn btn-primary btn-block d-block small mt-3" onclick="sub();">Share</a>
+
+        <div class="row">
+
+          <div class="col-6">
+            <h4>Update values for regions:</h4>
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select Region
+                <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="#">Region 15</a></li>
+                <li><a href="#">Region 16</a></li>
+                <li><a href="#">Region 18</a></li>
+              </ul>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label >Food: </label>
+                  <input type="email" class="form-control" id="foodCount" aria-describedby="emailHelp" placeholder="number">
+                </div>
               </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label >Medicines: </label>
+                  <input type="email" class="form-control" id="medicinesCount" aria-describedby="emailHelp" placeholder="number">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label >Clothes: </label>
+                  <input type="email" class="form-control" id="clothesCount" aria-describedby="emailHelp" placeholder="number">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <a  class="btn btn-primary btn-block d-block small mt-3" id="but" onclick="updateDB();">Update deliveries!</a>
+              </div>
+            </div>
+        </div>
+
+          <div class="col-6">
+
+            <div class="col-8">
+              <h4>Update requests for regions:</h4>
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select Region
+                  <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Region 15</a></li>
+                  <li><a href="#">Region 16</a></li>
+                  <li><a href="#">Region 18</a></li>
+                </ul>
+              </div>
+
+              <div class="row">
+                <div class="col-8">
+                  <div class="form-group">
+                    <label >Food: </label>
+                    <input type="email" class="form-control" id="foodCount2" aria-describedby="emailHelp" placeholder="number">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-8">
+                  <div class="form-group">
+                    <label >Medicines: </label>
+                    <input type="email" class="form-control" id="medicinesCount2" aria-describedby="emailHelp" placeholder="number">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-8">
+                  <div class="form-group">
+                    <label >Clothes: </label>
+                    <input type="email" class="form-control" id="clothesCount2" aria-describedby="emailHelp" placeholder="number">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-8">
+                  <a  class="btn btn-primary btn-block d-block small mt-3" id="but2" >Update Requests!</a>
+                </div>
+              </div>
+            </div>
+          </div>
+            <br>
+            <br>
+
+
           </div>
 
-          <br>
-        </form>
+
+
+
 
       </div>
       <!-- /.container-fluid -->
@@ -187,102 +273,15 @@
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Plugin JavaScript -->
+    <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
     <script src="vendor/datatables/jquery.dataTables.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script src="js/update.js"></script>
 
     <!-- Custom scripts for this template -->
     <script src="js/sb-admin.min.js"></script>
-
-<!--FIREBASE-->
-<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
-<script src="js/prakul.js"></script>
-<script type="application/javascript">
-    var userName = localStorage.getItem("user");
-    var uploader = document.getElementById('uploader');
-    var imgButton = document.getElementById('imgUpload');
-    var submitButton = document.getElementById('submit1');
-    var file;
-     var storageRef;
-    imgButton.addEventListener('change', function(e){
-      file = e.target.files[0];
-      storageRef = firebase.storage().ref('feed/' + file.name);
-      
-      /*task.on('state_changed', 
-        function progress(sn){
-            var per = (sn.bytesTransferred / sn.totalBytes) * 100;
-            uploader.value = per;
-      }, function error(err){
-
-      }, function complete(){
-
-      })
-    */
-    });
-
-    //document.getElementById('OrgName').chi
-    $('#OrgName').html(localStorage.getItem("orgName").toUpperCase());
-   // submitButton.addEventListener('onClick', function(e){
-     function sub(){
-      console.log("updating");
-
-
-
-        var task = storageRef.put(file);
-        var fullPath = storageRef.fullPath;
-        var description = document.getElementById('description').value;
-        var org = localStorage.getItem("orgName").toLowerCase();
-        var region = "X";
-        var dbRef = firebase.database().ref().child('feed').child(org);
-        
-        dbRef.push({
-          desc: description,
-          link: fullPath,
-          regionId: region,
-          timestamp:Date.now(),
-          volunteerID:userName,
-    
-          });
-        console.log("updated");
-       alert("Shared!");
-    };
-
-    // Initialize Firebase
-
-    //get db reference, child is the key
-    //var dbRef = firebase.database().ref().child('users');
-    //To load from database once
-    //dbRef.once('value').then(function(sn){
-    //  console.log(sn.val());
-    //})
-
-    //To continuously load/update data as the db is updated
-    //dbRef.on('value', snap => big.innerText = snap.val());
-
-    //or
-    /*
-    var starCountRef = firebase.database().ref().child('users')
-    starCountRef.on('value', function(snapshot) {
-      updateStarCount(postElement, snapshot.val());
-    });
-    */
-
-    //To push to db
-    /*var orgsRef = dbRef.child('orgs');
-    orgsRef.push({
-      name: 'Goonj',
-      email: 'contact@goonj.com',
-      location: {
-        city: 'New Delhi',
-        state: 'The Internet',
-        zip: '243556'
-      }
-    })
-    */
-
-</script>
-
 
   </body>
 
